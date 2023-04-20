@@ -3,4 +3,4 @@ obj/
 Properties/
 App.config
 battleship.csproj
-bin/Debug
+/bin
