@@ -3,5 +3,5 @@
 /Properties
 App.config
 battleship.csproj
-bin
+/bin
 battleship.sln
