@@ -115,7 +115,6 @@ namespace battleship
                     }
                 }
             }
-            DrawField(field);
             Console.CursorVisible = false;
             Ship[] coordinates;
             List<int[]> allCoordinates = new List<int[]>();
@@ -282,14 +281,14 @@ namespace battleship
                         }
                         break;
                     case ConsoleKey.Spacebar:
-                        if (currentShip.EndY - currentShip.StartY == 0 && currentShip.EndY + 1 < Field.GetLength(0)) // if horizontal
+                        if (currentShip.EndY - currentShip.StartY == 0 && currentShip.StartY + sizeOfShip < Field.GetLength(0)) // if horizontal
                         {
                             DrawShipInConsole(currentShip, "", Field);
                             currentShip.EndY += sizeOfShip - 1;
                             currentShip.EndX -= sizeOfShip - 1;
                             DrawShipInConsole(currentShip, "===", Field);
                         }
-                        else if (currentShip.EndX - currentShip.StartX == 0 && currentShip.EndX + 1 < Field.GetLength(1)) // if vertical
+                        else if (currentShip.EndX - currentShip.StartX == 0 && currentShip.StartX + sizeOfShip < Field.GetLength(1)) // if vertical
                         {
                             DrawShipInConsole(currentShip, "", Field);
                             currentShip.EndY -= sizeOfShip - 1;
