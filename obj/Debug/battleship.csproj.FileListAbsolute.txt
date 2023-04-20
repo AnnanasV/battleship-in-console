@@ -1,0 +1,21 @@
+E:\smth\Морской бой\battleship\bin\Debug\battleship.exe.config
+E:\smth\Морской бой\battleship\bin\Debug\battleship.exe
+E:\smth\Морской бой\battleship\bin\Debug\battleship.pdb
+E:\smth\Морской бой\battleship\obj\Debug\battleship.csproj.AssemblyReference.cache
+E:\smth\Морской бой\battleship\obj\Debug\battleship.csproj.CoreCompileInputs.cache
+E:\smth\Морской бой\battleship\obj\Debug\battleship.exe
+E:\smth\Морской бой\battleship\obj\Debug\battleship.pdb
+E:\smth\Battleship\BattleshipCreateField\bin\Debug\battleship.exe.config
+E:\smth\Battleship\BattleshipCreateField\bin\Debug\battleship.exe
+E:\smth\Battleship\BattleshipCreateField\bin\Debug\battleship.pdb
+E:\smth\Battleship\BattleshipCreateField\obj\Debug\battleship.csproj.AssemblyReference.cache
+E:\smth\Battleship\BattleshipCreateField\obj\Debug\battleship.csproj.CoreCompileInputs.cache
+E:\smth\Battleship\BattleshipCreateField\obj\Debug\battleship.exe
+E:\smth\Battleship\BattleshipCreateField\obj\Debug\battleship.pdb
+E:\smth\Battleship\Battleship\bin\Debug\battleship.exe.config
+E:\smth\Battleship\Battleship\bin\Debug\battleship.exe
+E:\smth\Battleship\Battleship\bin\Debug\battleship.pdb
+E:\smth\Battleship\Battleship\obj\Debug\battleship.csproj.AssemblyReference.cache
+E:\smth\Battleship\Battleship\obj\Debug\battleship.csproj.CoreCompileInputs.cache
+E:\smth\Battleship\Battleship\obj\Debug\battleship.exe
+E:\smth\Battleship\Battleship\obj\Debug\battleship.pdb
