@@ -1,5 +1,6 @@
-/.vs
-/obj
-/Properties
+.vs/
+obj/
+Properties/
 App.config
 battleship.csproj
+bin/
