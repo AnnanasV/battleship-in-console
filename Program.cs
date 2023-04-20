@@ -9,6 +9,7 @@ namespace battleship
 {
     class Program
     {
+        public const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         static void Main(string[] args)
         {
 
@@ -40,7 +41,7 @@ namespace battleship
                                 game.StartPlay(path1, path2);
                             else
                             {
-                                WriteWithColor($"File \"{path1}\" or \"{path2}\" isn`t exist !!!", ConsoleColor.DarkRed);
+                                Game.WriteWithColor($"File \"{path1}\" or \"{path2}\" isn`t exist !!!", ConsoleColor.DarkRed);
                                 Console.ReadKey();
                             }
                         }
@@ -48,18 +49,18 @@ namespace battleship
                     case "3":
                         DrawAndClear();
                         Console.WriteLine("Enter your number: ");
-                        if(Int32.TryParse(Console.ReadLine(), out int num))
+                        if (Int32.TryParse(Console.ReadLine(), out int num))
                         {
                             Console.WriteLine("Enter your name:");
                             string path = $"{Console.ReadLine()}_PlayerField{num}.txt";
                             if (File.Exists(path))
                             {
                                 File.Delete(path);
-                                WriteWithColor("FILE HAS BEEN DELETED", ConsoleColor.DarkGreen);
+                                Game.WriteWithColor("FILE HAS BEEN DELETED", ConsoleColor.DarkGreen);
                             }
                             else
                             {
-                                WriteWithColor($"File \"{path}\" isn`t exist !!!", ConsoleColor.DarkRed);
+                                Game.WriteWithColor($"File \"{path}\" isn`t exist !!!", ConsoleColor.DarkRed);
                                 Console.ReadKey();
                             }
                         }
@@ -74,14 +75,15 @@ namespace battleship
         static void DrawAndClear()
         {
             Console.Clear();
-            WriteWithColor("======= CHOOSE OPTION =======\n", ConsoleColor.DarkCyan);
+            Game.WriteWithColor("======= CHOOSE OPTION =======\n", ConsoleColor.DarkCyan);
         }
 
         static void CreateFields()
         {
             Console.OutputEncoding = UTF8Encoding.UTF8;
             DrawTitle();
-            Console.Write("\nEnter your name: ");
+
+            Game.WriteWithColor("Enter your name: ", ConsoleColor.DarkCyan);
             string name = Console.ReadLine();
             DrawTitle();
             Console.WriteLine($"\nSize of field(max: 25 25):\n\n(if the opponent has already specified it, specify the same)");
@@ -90,65 +92,51 @@ namespace battleship
             if (!Int32.TryParse(sizeOfField[0], out int fieldX) || !Int32.TryParse(sizeOfField[1], out int fieldY) || fieldX >= 26 || fieldY >= 26)
             {
                 DrawTitle();
-                WriteWithColor("Try again. . .", ConsoleColor.DarkRed);
+                Game.WriteWithColor("Try again. . .", ConsoleColor.DarkRed);
                 Console.ReadKey();
                 return;
             }
 
             DrawTitle();
             Console.WriteLine();
-            string[,] field = new string[fieldY + 2, fieldX + 2]; // 2 - borders
-            string[,] fieldForShip = new string[field.GetLength(0), field.GetLength(1)];
+            char[,] field = new char[fieldY + 2, fieldX + 2]; // 2 - borders
+
             for (int i = 0; i < field.GetLength(0); i++)
             {
                 for (int j = 0; j < field.GetLength(1); j++)
                 {
-                    if (i == 0 && j != 0 && j < field.GetLength(1) - 1)
+                    if (i == 0 || i == field.GetLength(0) - 1 || j == 0 || j == field.GetLength(1) - 1)
                     {
-                        field[i, j] = $" {j}";
-                        if (j < 10)
-                            field[i, j] = $" {j} ";
-                    }
-
-                    else if (j == 0 && i != 0 && i < field.GetLength(0) - 1)
-                    {
-                        field[i, j] = $" {i}";
-                        if (i < 10)
-                            field[i, j] = $" {i} ";
-                    }
-
-                    else if (i == 0 || i == field.GetLength(0) - 1 || j == 0 || j == field.GetLength(1) - 1)
-                    {
-                        field[i, j] = " # ";
+                        field[i, j] = '#';
                     }
                     else
                     {
-                        field[i, j] = "   ";
+                        field[i, j] = ' ';
                     }
                 }
             }
-            DrawField(field, fieldForShip);
+            DrawField(field);
             Console.CursorVisible = false;
-            int[,] coordinates;
+            Ship[] coordinates;
             List<int[]> allCoordinates = new List<int[]>();
-            WriteWithColor("First ship 4х1", ConsoleColor.Red);
-            coordinates = SetShips(field, fieldForShip, 1, 4);
+            //Game.WriteWithColor("First ship 4х1", ConsoleColor.Red);
+            coordinates = SetShips(field, 1, 4);
             RedistributeValues(coordinates, allCoordinates, 1);
-            WriteWithColor("Second two ships 3х1", ConsoleColor.Red);
-            coordinates = SetShips(field, fieldForShip, 2, 3);
+            //Game.WriteWithColor("Second two ships 3х1", ConsoleColor.Red);
+            coordinates = SetShips(field, 2, 3);
             RedistributeValues(coordinates, allCoordinates, 2);
-            WriteWithColor("Three ships 2х1", ConsoleColor.Red);
-            coordinates = SetShips(field, fieldForShip, 3, 2);
+            //Game.WriteWithColor("Three ships 2х1", ConsoleColor.Red);
+            coordinates = SetShips(field,  3, 2);
             RedistributeValues(coordinates, allCoordinates, 3);
-            WriteWithColor("Last four ships 1х1", ConsoleColor.Red);
-            coordinates = SetShips(field, fieldForShip, 4, 1);
+            //Game.WriteWithColor("Last four ships 1х1", ConsoleColor.Red);
+            coordinates = SetShips(field, 4, 1);
             RedistributeValues(coordinates, allCoordinates, 4);
-            DrawField(field, fieldForShip);
+            DrawField(field);
 
-            Console.SetCursorPosition(0, field.GetLength(0) + 2);
+            Console.SetCursorPosition(0, field.GetLength(0) * 2 + 3);
             Console.WriteLine("Number of player (1/2)");
             Int32.TryParse(Console.ReadLine(), out int playerNumber);
-            WriteWithColor("Ok, you are " + playerNumber + " player", ConsoleColor.DarkMagenta);
+
             string path = $"{name}_PlayerField{playerNumber}.txt";
             using (StreamWriter sw = new StreamWriter(path, false))
             {
@@ -171,185 +159,165 @@ namespace battleship
                 }
                 sw.WriteLine(Convert.ToString(fieldX + " " + fieldY));
             }
-            WriteWithColor($"File \"{path}\" already ready!)", ConsoleColor.DarkGreen);
+            Game.WriteWithColor($"\nFile \"{path}\" already ready!)", ConsoleColor.DarkGreen);
             Console.ReadKey();
         }
 
-        static void RedistributeValues(int[,] fromThis, List<int[]> toThis, int amountOfTimes)
+        static void RedistributeValues(Ship[] fromThis, List<int[]> toThis, int amountOfTimes)
         {
             for (int i = 0; i < amountOfTimes; i++)
             {
-                int[] arr = new int[4];
-                for (int j = 0; j < 4; j++)
-                {
-                    arr[j] = fromThis[i, j];
-                }
+                int[] arr = new int[4] { fromThis[i].StartY, fromThis[i].StartX, fromThis[i].EndY, fromThis[i].EndX };
                 toThis.Add(arr);
             }
         }
 
-        static int[,] SetShips(string[,] field, string[,] fieldForShip, int amount, int sizeOfShip)
+        static Ship[] SetShips(char[,] field, int amount, int sizeOfShip)
         {
-            int[,] forFile = new int[amount, 4];
+            Ship[] forFile = new Ship[amount];
             for (int i = 0; i < amount; i++)
             {
-                int[] firstCoordinates = GetCoordinates(field, fieldForShip, sizeOfShip);
+                Ship firstCoordinates = new Ship(1, 1, 1, sizeOfShip);
+                firstCoordinates = GetCoordinates(field, sizeOfShip, firstCoordinates);
                 for (int j = 0; j < 4; j++)
                 {
-                    forFile[i, j] = firstCoordinates[j];
+                    forFile[i] = firstCoordinates;
                 }
             }
             return forFile;
         }
 
-        static void WriteWithColor(string massage, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(massage);
-            Console.ResetColor();
-        }
-
-        static void DrawField(string[,] Field, string[,] FieldNewShip)
+        static void DrawField(char[,] Field)
         {
             DrawTitle();
-            for (int y = 0; y < Field.GetLength(0); y++)
+            for (int i = 0; i < Field.GetLength(0); i++)
             {
-                for (int x = 0; x < Field.GetLength(1); x++)
+                Game.DrawLines('-', 6 * Field.GetLength(1) - 1);
+                for (int j = 0; j < Field.GetLength(1); j++)
                 {
-                    if (FieldNewShip[y, x] == "===")
+                    if (Field[i, j] == '_')
                     {
-                        Console.BackgroundColor = ConsoleColor.DarkGreen;
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.Write(FieldNewShip[y, x]);
-                        Console.ResetColor();
+                        Game.WriteWithColor("---", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
                     }
-                    else if (Field[y, x] == "___")
+                    else if (i == 0 && j > 0 && j < Field.GetLength(1) - 1)
                     {
-                        Console.BackgroundColor = ConsoleColor.DarkGray;
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.Write(Field[y, x]);
-                        Console.ResetColor();
+                        if (j < 10)
+                            Console.Write($" {j} ");
+                        else
+                            Console.Write($"{j} ");
+                    }
+                    else if (j == 0 && i > 0 && i < Field.GetLength(0) - 1)
+                    {
+                        Console.Write($" {letters[i - 1]} ");
                     }
                     else
-                        Console.Write(Field[y, x]);
+                        Console.Write($" {Field[i, j]} ");
+                    Console.Write(" | ");
                 }
-                Console.WriteLine();
             }
+            Console.WriteLine();
         }
-        static void DrawShip(string[,] Field, string[,] FieldNewShip, int shipX, int shipY, int sizeOfShip, char side, string sign)
+
+        static void DrawShipInConsole(Ship ship, string sign, char[,] Field)
         {
-            if (side == 'H') //horizontal
+            for(int i = ship.StartY; i <= ship.EndY; i++)
             {
-                for (int i = 0; i < sizeOfShip; i++)
+                for(int j = ship.StartX; j <= ship.EndX; j++)
                 {
-                    FieldNewShip[shipY, shipX + i] = sign;
+                    Console.SetCursorPosition(6 * j, 3 + 2 * i);
+                    if(sign != "")
+                        Game.WriteWithColor(sign, ConsoleColor.DarkBlue, ConsoleColor.DarkBlue);
+                    else if(Field[i, j] == ' ')
+                        Game.WriteWithColor("   ", ConsoleColor.Black, ConsoleColor.Black);
+                    else Game.WriteWithColor("---", ConsoleColor.DarkGray, ConsoleColor.DarkGray);
                 }
-                DrawField(Field, FieldNewShip);
-            }
-            else if (side == 'V') // vertical
-            {
-                for (int i = 0; i < sizeOfShip; i++)
-                {
-                    FieldNewShip[shipY + i, shipX] = sign;
-                }
-                DrawField(Field, FieldNewShip);
             }
         }
 
-        static int[] GetCoordinates(string[,] Field, string[,] FieldForShip, int sizeOfShip)
+        static Ship GetCoordinates(char[,] Field, int sizeOfShip, Ship currentShip)
         {
-            int sizeOfShipX = sizeOfShip, sizeOfShipY = 1;
-            char direction = 'H';
-            int shipX = 1, shipY = 1;
             ConsoleKey pressedKey;
-            DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-            while (true)
+            bool isEnd = false;
+            DrawField(Field);
+            DrawShipInConsole(currentShip, "===", Field);
+            while (!isEnd)
             {
-                Console.SetCursorPosition(Field.GetLength(1) * 3 + 3, shipY);
-                pressedKey = Console.ReadKey().Key;
-                if ((pressedKey == ConsoleKey.RightArrow) && (shipX + sizeOfShipX < Field.GetLength(1) - 1))
+                pressedKey = Console.ReadKey(true).Key;
+                switch (pressedKey)
                 {
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                    shipX += 1;
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                }
-                else if (pressedKey == ConsoleKey.LeftArrow && shipX - 1 >= 1)
-                {
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                    shipX -= 1;
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                }
-                else if ((pressedKey == ConsoleKey.DownArrow) && shipY + sizeOfShipY + 1 < Field.GetLength(0))
-                {
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                    shipY += 1;
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                }
-                else if ((pressedKey == ConsoleKey.UpArrow) && shipY - 1 >= 1)
-                {
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                    shipY -= 1;
-                    DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                }
-                else if (pressedKey == ConsoleKey.Spacebar)
-                {
-                    if (sizeOfShipX > 1 && shipY + sizeOfShip < Field.GetLength(0))
-                    {
-                        sizeOfShipY = sizeOfShip;
-                        sizeOfShipX = 1;
-                        DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                        direction = 'V';
-                        DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                    }
-                    else if (sizeOfShipY > 1 && shipX + sizeOfShip < Field.GetLength(1))
-                    {
-                        sizeOfShipX = sizeOfShip;
-                        sizeOfShipY = 1;
-                        DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                        direction = 'H';
-                        DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "===");
-                    }
-                }
-                else if (pressedKey == ConsoleKey.Enter)
-                {
-                    if (CheckPosition(Field, shipX, shipY, sizeOfShip, direction))
-                    {
-                        DrawShip(Field, FieldForShip, shipX, shipY, sizeOfShip, direction, "   ");
-                        DrawShip(FieldForShip, Field, shipX, shipY, sizeOfShip, direction, "___");
+                    case ConsoleKey.RightArrow:
+                        if (currentShip.EndX + 1 < Field.GetLength(1) - 1)
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            ++currentShip.EndX;
+                            ++currentShip.StartX;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
                         break;
-                    }
+                    case ConsoleKey.LeftArrow:
+                        if (currentShip.StartX - 1 >= 1)
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            --currentShip.EndX;
+                            --currentShip.StartX;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (currentShip.EndY + 1 < Field.GetLength(0) - 1)
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            ++currentShip.EndY;
+                            ++currentShip.StartY;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
+                        break;
+                    case ConsoleKey.UpArrow:
+                        if (currentShip.StartY - 1 >= 1)
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            --currentShip.EndY;
+                            --currentShip.StartY;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
+                        break;
+                    case ConsoleKey.Spacebar:
+                        if (currentShip.EndY - currentShip.StartY == 0 && currentShip.EndY + 1 < Field.GetLength(0)) // if horizontal
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            currentShip.EndY += sizeOfShip - 1;
+                            currentShip.EndX -= sizeOfShip - 1;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
+                        else if (currentShip.EndX - currentShip.StartX == 0 && currentShip.EndX + 1 < Field.GetLength(1)) // if vertical
+                        {
+                            DrawShipInConsole(currentShip, "", Field);
+                            currentShip.EndY -= sizeOfShip - 1;
+                            currentShip.EndX += sizeOfShip - 1;
+                            DrawShipInConsole(currentShip, "===", Field);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        if (currentShip.CheckBorders(Field))
+                        {
+                            WriteShipInField(currentShip, Field);
+                            isEnd = true;
+                        }
+                        break;
                 }
             }
-
-            return new int[] { shipY, shipX, shipY + sizeOfShipY - 1, shipX + sizeOfShipX - 1 };
+            return currentShip;
         }
 
-        static bool CheckPosition(string[,] Field, int shipX, int shipY, int sizeOfShip, char side)
+        static void WriteShipInField(Ship ship, char[,] Field)
         {
-            bool isPossible = true;
-            if (side == 'H')
+            for(int i = ship.StartY; i <= ship.EndY; i++)
             {
-                for (int y = shipY - 1; y <= shipY + 1; y++)
+                for(int j = ship.StartX; j <= ship.EndX; j++)
                 {
-                    for (int x = shipX - 1; x <= shipX + sizeOfShip; x++)
-                    {
-                        if (Field[y, x] == "___")
-                            isPossible = false;
-                    }
+                    Field[i, j] = '_';
                 }
             }
-            else if (side == 'V')
-            {
-                for (int y = shipY - 1; y <= shipY + sizeOfShip; y++)
-                {
-                    for (int x = shipX - 1; x <= shipX + 1; x++)
-                    {
-                        if (Field[y, x] == "___")
-                            isPossible = false;
-                    }
-                }
-            }
-            return isPossible;
         }
 
         static void DrawTitle()

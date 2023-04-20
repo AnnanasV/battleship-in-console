@@ -5,6 +5,13 @@
 You need a friend to play. Both of you have to go to run "battleship.exe" and choose "1" in menu to create fields.
 You can`t set ships so close, even obliquely.
 
+GO:
+right - right arrow
+left - left arrow
+down - down arrow
+up - up arrow
+turn around - spacebar
+
 After successful finishing a program will write, that file has already been created.
 
 
