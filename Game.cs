@@ -102,7 +102,7 @@ namespace battleship
             }
         }
 
-        static bool PlayGame(char[,] fieldPlayer1, int field1X, int field1Y, Ship[] ships1, string name, ref bool isEnd)
+        bool PlayGame(char[,] fieldPlayer1, int field1X, int field1Y, Ship[] ships1, string name, ref bool isEnd)
         {
             DrawFieldWhilePlay(fieldPlayer1);
             string cell;
@@ -141,7 +141,7 @@ namespace battleship
             }
             return isEnd;
         }
-        static bool SetCell(char[,] field, int cellLetter, int cellNumber)
+        bool SetCell(char[,] field, int cellLetter, int cellNumber)
         {
             char cell = field[cellLetter + 1, cellNumber];
             if (cellLetter + 1 > 0 && cellLetter + 1 < field.GetLength(0) && cellNumber > 0 && cellNumber < field.GetLength(1) - 1)
@@ -160,7 +160,7 @@ namespace battleship
             return false;
         }
 
-        static bool CheckCellSizes(string cell, int xMax, int yMax, out int cellLetter, out int cellNum)
+        bool CheckCellSizes(string cell, int xMax, int yMax, out int cellLetter, out int cellNum)
         {
             bool isInField = true;
             cellLetter = 0;
@@ -185,7 +185,7 @@ namespace battleship
             return isInField;
         }
 
-        static bool CheckCellPosition(char[,] field, int cellLetter, int cellNumber)
+        bool CheckCellPosition(char[,] field, int cellLetter, int cellNumber)
         {
             bool isFree = true;
             char cell = field[cellLetter, cellNumber];
@@ -196,12 +196,12 @@ namespace battleship
             return isFree;
         }
 
-        static void DrawFieldWhilePlay(char[,] field)
+        void DrawFieldWhilePlay(char[,] field)
         {
             DrawTitle();
             for (int i = 0; i < field.GetLength(0); i++)
             {
-                DrawLines('-', 6 * field.GetLength(1) - 1);
+                Console.WriteLine(new string('-', 6 * field.GetLength(1) - 1));
                 for (int j = 0; j < field.GetLength(1); j++)
                 {
                     if (field[i, j] == 'P')
@@ -238,7 +238,7 @@ namespace battleship
             Console.WriteLine();
         }
 
-        public static void DrawLines(char sign, int times)
+        /*public static void DrawLines(char sign, int times)
         {
             Console.WriteLine();
             for (int i = 0; i < times; i++)
@@ -246,9 +246,9 @@ namespace battleship
                 Console.Write(sign);
             }
             Console.WriteLine();
-        }
+        }*/
 
-        static void ShipsInArray(char[,] field, List<int[]> coordinates, Ship[] ships)
+        void ShipsInArray(char[,] field, List<int[]> coordinates, Ship[] ships)
         {
             int count = -1;
             foreach (var ship in coordinates)
@@ -272,7 +272,7 @@ namespace battleship
             }
         }
 
-        static int CheckKilled(Ship[] ships, char[,] field)
+        int CheckKilled(Ship[] ships, char[,] field)
         {
             int count = 0;
             foreach (var ship in ships)
@@ -285,7 +285,7 @@ namespace battleship
             return count;
         }
 
-        static void Add(Ship[] ships, Ship ship, int yetInArray)
+        void Add(Ship[] ships, Ship ship, int yetInArray)
         {
             if (++yetInArray <= ships.Length)
             {
@@ -293,7 +293,7 @@ namespace battleship
             }
         }
 
-        static void DrawTitle()
+        void DrawTitle()
         {
             Console.Clear();
             Console.WriteLine("~~~~~~ BATTLESHIP GAME ~~~~~~");
@@ -307,7 +307,7 @@ namespace battleship
             Console.ResetColor();
         }
 
-        static void FileToList(string path, List<int[]> coordinates, out int x, out int y)
+        void FileToList(string path, List<int[]> coordinates, out int x, out int y)
         {
             string lineOfShip;
             string coordOf1Ship;

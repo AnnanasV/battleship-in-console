@@ -9,7 +9,6 @@ namespace battleship
 {
     class Program
     {
-        public const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         static void Main(string[] args)
         {
 
@@ -118,16 +117,12 @@ namespace battleship
             Console.CursorVisible = false;
             Ship[] coordinates;
             List<int[]> allCoordinates = new List<int[]>();
-            //Game.WriteWithColor("First ship 4х1", ConsoleColor.Red);
             coordinates = SetShips(field, 1, 4);
             RedistributeValues(coordinates, allCoordinates, 1);
-            //Game.WriteWithColor("Second two ships 3х1", ConsoleColor.Red);
             coordinates = SetShips(field, 2, 3);
             RedistributeValues(coordinates, allCoordinates, 2);
-            //Game.WriteWithColor("Three ships 2х1", ConsoleColor.Red);
             coordinates = SetShips(field,  3, 2);
             RedistributeValues(coordinates, allCoordinates, 3);
-            //Game.WriteWithColor("Last four ships 1х1", ConsoleColor.Red);
             coordinates = SetShips(field, 4, 1);
             RedistributeValues(coordinates, allCoordinates, 4);
             DrawField(field);
@@ -191,7 +186,7 @@ namespace battleship
             DrawTitle();
             for (int i = 0; i < Field.GetLength(0); i++)
             {
-                Game.DrawLines('-', 6 * Field.GetLength(1) - 1);
+                Console.WriteLine(new string('-', 6 * Field.GetLength(1) - 1));
                 for (int j = 0; j < Field.GetLength(1); j++)
                 {
                     if (Field[i, j] == '_')
@@ -207,7 +202,7 @@ namespace battleship
                     }
                     else if (j == 0 && i > 0 && i < Field.GetLength(0) - 1)
                     {
-                        Console.Write($" {letters[i - 1]} ");
+                        Console.Write($" {Game.letters[i - 1]} ");
                     }
                     else
                         Console.Write($" {Field[i, j]} ");
@@ -307,12 +302,11 @@ namespace battleship
             }
             return currentShip;
         }
-
         static void WriteShipInField(Ship ship, char[,] Field)
         {
-            for(int i = ship.StartY; i <= ship.EndY; i++)
+            for (int i = ship.StartY; i <= ship.EndY; i++)
             {
-                for(int j = ship.StartX; j <= ship.EndX; j++)
+                for (int j = ship.StartX; j <= ship.EndX; j++)
                 {
                     Field[i, j] = '_';
                 }
